@@ -173,7 +173,7 @@ Customer Chat Message
 
 1. **Clone this repository**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/n8n-ai-customer-support-agent.git
+   git clone https://github.com/YashPatel25/n8n-ai-customer-support-agent.git
    cd n8n-ai-customer-support-agent
    ```
 
