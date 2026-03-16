@@ -1,0 +1,475 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a customer support agent for LiMi restaurant.\nFollow the rules below:\n\n- For every customer complaints, please politely apologise to the customer and offer them 10% discount in their next order which will be credited to their account in form of coupon code. (keep the message short)\n\n- For every customer appreciation, you should thank the customer for the appreciation and provide them 5% discount in their next order which will be credited to their account in form of coupon code. (keep the message short)\n\n- Use \"Get Inventory\" to fetch the latest inventory data from the Inventory sheet.\n\n- When customer ask for the menu, just show the customer Food item and price in form of a table. (Do not show the stock to the customer).\n\n- Use \"Add Orders\" tool to add orders in the Orders sheet based on customer's request. You need to update only Name, Item, and Quantity fields based on customer's message. Ask the customer politely if any field is missing in customer's message. No additional data required from customer.\n\n- If customer orders some item that is out of stock or more than the current stock, then please let the customer know in a very polite way, and suggest Chef's special Masala Dosa item instead.\n\n- Once order is confirmed, please ask the customer to make the payment at yp@upi to place the order.\n\n- Once order is added, please use \"Update Inventory\" tool to reduce the stock for the ordered food item. Example: If customer has ordered 2 Veg Sandwich, then you should deduct 2 from the Veg Sandwich's stock.\n\n- Use \"Add Feedback\" to add the customer's feedback (in the same form sent by customer) in the feedback sheet. You have to add Customer's name in the Name field (Ask politely if the customer has not given his/her name). Do not ask any other data from customer. You also Category field as either Positive or Negative in the sheet. Also the exact response that you have sent to the customer as a part of Resolution in the Resolution field.\n\n- Use \"Policies RAG\" tool in order to answer customer queries related to Zwigato restaurant policies.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "fbb534d3-f43d-498f-a4b7-f3e2c46b55d1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        208
+      ],
+      "id": "e77ead52-c5a7-4cbb-aa91-d64e4b39b4d4",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "85a4d6ce-3036-4482-920b-d17dd4c7d8bd",
+      "name": "When chat message received",
+      "webhookId": "51558d01-cc74-4ddd-9bcd-3dcf5bc6a5b3"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1YNPbOWoFOSNj8kBP2Rvsjxt-XYRa44-f3rAO2zU5FvU",
+          "mode": "list",
+          "cachedResultName": "LiMi Master Dashboard",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YNPbOWoFOSNj8kBP2Rvsjxt-XYRa44-f3rAO2zU5FvU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1536292951,
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YNPbOWoFOSNj8kBP2Rvsjxt-XYRa44-f3rAO2zU5FvU/edit#gid=1536292951"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Item": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Item', ``, 'string') }}",
+            "Quantity": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Quantity', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Item",
+              "displayName": "Item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quantity",
+              "displayName": "Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        320
+      ],
+      "id": "c8eba46a-17c0-413c-aba6-0e7d2827e545",
+      "name": "Add Orders",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "x16tnJ0KeusKrzc7",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YNPbOWoFOSNj8kBP2Rvsjxt-XYRa44-f3rAO2zU5FvU",
+          "mode": "list",
+          "cachedResultName": "LiMi Master Dashboard",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YNPbOWoFOSNj8kBP2Rvsjxt-XYRa44-f3rAO2zU5FvU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YNPbOWoFOSNj8kBP2Rvsjxt-XYRa44-f3rAO2zU5FvU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Food Item": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Food_Item__using_to_match_', ``, 'string') }}",
+            "Stock": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Stock', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Food Item"
+          ],
+          "schema": [
+            {
+              "id": "Food Item",
+              "displayName": "Food Item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Price",
+              "displayName": "Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Stock",
+              "displayName": "Stock",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        304,
+        336
+      ],
+      "id": "0c63457d-ccf7-481b-bdda-9a9060633ff1",
+      "name": "Update Inventory",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "x16tnJ0KeusKrzc7",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1YNPbOWoFOSNj8kBP2Rvsjxt-XYRa44-f3rAO2zU5FvU",
+          "mode": "list",
+          "cachedResultName": "LiMi Master Dashboard",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YNPbOWoFOSNj8kBP2Rvsjxt-XYRa44-f3rAO2zU5FvU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YNPbOWoFOSNj8kBP2Rvsjxt-XYRa44-f3rAO2zU5FvU/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        512,
+        288
+      ],
+      "id": "8323dc3b-7ac2-4ed3-b197-8575d2105ba5",
+      "name": "Get Inventory",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kHRibEXkQpvoii1x",
+          "name": "Google Sheets account 2"
+        }
+      },
+      "notes": " this node to retry automatically "
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://prod-1-data.ke.pinecone.io/assistant/chat/limi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Api-Key",
+              "value": "pcsk_22NEWa_8YpHZnYZbhywsnGK6snuzgCWCyGJLWt4w7MDgMevmYGag7tSGC3cTC4DGedLkum"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $fromAI(searchQuery) }}\"\n    }\n  ],\n  \"stream\": false,\n  \"model\": \"gpt-4o\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        704,
+        192
+      ],
+      "id": "5ca340d6-667c-4ee5-ba16-2a872079dffb",
+      "name": "Policies RAG"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1YNPbOWoFOSNj8kBP2Rvsjxt-XYRa44-f3rAO2zU5FvU",
+          "mode": "list",
+          "cachedResultName": "LiMi Master Dashboard",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YNPbOWoFOSNj8kBP2Rvsjxt-XYRa44-f3rAO2zU5FvU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 151367289,
+          "mode": "list",
+          "cachedResultName": "Feedback",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YNPbOWoFOSNj8kBP2Rvsjxt-XYRa44-f3rAO2zU5FvU/edit#gid=151367289"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Feedback": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Feedback', ``, 'string') }}",
+            "Category": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Category', ``, 'string') }}",
+            "Resolution": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Resolution', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Feedback",
+              "displayName": "Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resolution",
+              "displayName": "Resolution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        608,
+        240
+      ],
+      "id": "64177ac1-15aa-4767-a872-6155c5dc3fd1",
+      "name": "Feedback",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Vzlk8yXRPnapuHXy",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        64,
+        192
+      ],
+      "id": "48a5ddb4-53b6-437d-962e-83cfde078063",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Iaht0JySN6p0j96I",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Orders": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Inventory": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Inventory": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Policies RAG": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "58c661c4-ded6-4c21-9ffb-007240bb8063",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "06082f8a1600fb551a5c5c0da3da04928d5f6700a709239e5dd9729f037988af"
+  },
+  "id": "Xu5poL3MjS5z5OFl",
+  "tags": []
+}
